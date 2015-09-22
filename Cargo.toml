@@ -1,0 +1,7 @@
+[package]
+name = "lodestone-extent"
+version = "0.1.0"
+authors = ["dremonkey <a.deutmeyer@gmail.com>"]
+
+[dependencies.lodestone-polygon]
+path = "../lodestone-polygon"
