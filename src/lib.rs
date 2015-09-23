@@ -16,9 +16,13 @@ extern crate lodestone_polygon;
 
 use lodestone_polygon::FeaturePolygon;
 
+pub trait Extent {
+  fn extent(&self) -> Vec<f64>;
+}
+
 /// ## Return
 /// * Array - Contains coordinates in WSEN order (west, south, east, north)
-pub extern fn extent(polygon: FeaturePolygon) -> Vec<f64> {
+pub extern fn extent(polygon: &FeaturePolygon) -> Vec<f64> {
   
   let mut extent = vec![INFINITY, INFINITY, NEG_INFINITY, NEG_INFINITY];
   let ref ring = polygon.coordinates()[0]; // only use outer
@@ -33,19 +37,26 @@ pub extern fn extent(polygon: FeaturePolygon) -> Vec<f64> {
   extent
 }
 
+impl Extent for FeaturePolygon {
+  fn extent(&self) -> Vec<f64> {
+    extent(&self)
+  }
+}
+
 #[cfg(test)]
 mod tests {
   use lodestone_polygon::FeaturePolygon;
-  use super::extent;
+  use super::{Extent, extent};
   
   #[test]
-  fn test_simple() {
+  fn test_polygon() {
     let ring = vec![vec![0.0, 0.0], vec![1.0, 2.0], vec![2.0, 0.0], vec![0.0, 0.0]];
     let polygon = FeaturePolygon::new(vec![ring]);
     
     let expected = vec![0.0, 0.0, 2.0, 2.0];
-    let bbox = extent(polygon);
+    let bbox = extent(&polygon);
 
     assert_eq!(expected, bbox);
+    assert_eq!(expected, polygon.extent());
   }
 }
